@@ -6,3 +6,5 @@ class EstimateRequest(BaseModel):
     roll_id: int
     save: bool = False
     note: str = ""
+    paste_enabled: bool = False
+    coverage: float | None = None
