@@ -8,5 +8,6 @@ onMounted(async () => { wall.value = await getJSON(`/api/walls/${props.id}`) })
 <template>
   <div class="page" v-if="wall"><h1>{{ wall.name }}</h1>
   <p v-if="wall.data_quality==='dirty'" class="warn">{{ wall.note }}</p>
-  <p>周长 {{ wall.perimeter }} m，墙高 {{ wall.height }} m</p></div>
+  <p>周长 {{ wall.perimeter }} m，墙高 {{ wall.height }} m</p>
+  <p>毛面积 {{ wall.gross_area_m2 }} ㎡ · 门洞 {{ wall.door_area_m2 }} ㎡ · 净面积 {{ wall.net_area_m2 }} ㎡</p></div>
 </template>

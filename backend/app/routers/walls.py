@@ -1,4 +1,6 @@
 from fastapi import APIRouter, HTTPException
+
+from app.engines.wallpaper_math import wall_areas
 from app.repositories import walls as repo
 
 router = APIRouter()
@@ -14,4 +16,4 @@ def get_wall(wall_id: int):
     row = repo.get_wall(wall_id)
     if not row:
         raise HTTPException(404)
-    return row
+    return {**row, **wall_areas(row["perimeter"], row["height"], row.get("door_area") or 0.0)}

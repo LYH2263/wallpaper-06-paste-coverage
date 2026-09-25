@@ -1,4 +1,9 @@
-"""Wallpaper rolls: perimeter strips, pattern repeat on drop length, strips per roll."""
+"""Wallpaper rolls: perimeter strips, pattern repeat on drop length, strips per roll.
+
+Paste （胶浆）: gross area = usable perimeter * height, net = gross - registered
+door openings, liters = ceil(net / coverage). Paste is additive only — roll math
+is untouched so disabling paste yields exactly the pre-paste rolls.
+"""
 
 from app.engines.helpers import ceil_units, floor_units
 
@@ -26,3 +31,25 @@ def roll_count(
         "strips_per_roll": strips_per_roll,
         "rolls": rolls,
     }
+
+
+def wall_areas(perimeter: float, height: float, door_area: float) -> dict:
+    """Gross/net wall area; net subtracts registered door openings."""
+    gross = float(perimeter) * float(height)
+    net = gross - float(door_area)
+    return {
+        "gross_area_m2": round(gross, 3),
+        "door_area_m2": round(float(door_area), 3),
+        "net_area_m2": round(net, 3),
+    }
+
+
+def paste_liters(perimeter: float, height: float, door_area: float, coverage: float) -> dict:
+    """Paste usage in liters: ceil(net_area / coverage). Rejects bad inputs."""
+    if float(coverage) <= 0:
+        raise ValueError("invalid coverage")
+    areas = wall_areas(perimeter, height, door_area)
+    if areas["net_area_m2"] < 0:
+        raise ValueError("negative net area")
+    liters = ceil_units(areas["net_area_m2"] / float(coverage))
+    return {**areas, "coverage_m2_per_l": float(coverage), "liters": liters}
